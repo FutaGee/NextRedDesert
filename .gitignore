@@ -1,0 +1,24 @@
+# Unreal Engine generated files
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# IDE and user-local files
+.vs/
+.idea/
+*.sln.DotSettings.user
+*.uproject.DotSettings.user
+
+# Visual Studio build output
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS files
+Thumbs.db
+Desktop.ini
