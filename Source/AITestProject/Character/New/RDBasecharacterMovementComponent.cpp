@@ -4,6 +4,33 @@
 #include "Character/New/WallRunSurfaceComponent.h"
 #include "Engine/World.h"
 
+void URDBasecharacterMovementComponent::PhysFalling(float DeltaTime, int32 Iterations)
+{
+	Super::PhysFalling(DeltaTime, Iterations);
+
+	if (MovementMode != MOVE_Falling || !HasValidData() || DeltaTime < MIN_TICK_TIME)
+	{
+		return;
+	}
+
+	if (AirLateralDragDeceleration <= 0.0f || HasAnimRootMotion() || CurrentRootMotion.HasOverrideVelocity())
+	{
+		return;
+	}
+
+	const FVector LateralVelocity = ProjectToGravityFloor(Velocity);
+	const float LateralSpeed = LateralVelocity.Size();
+	if (LateralSpeed <= UE_KINDA_SMALL_NUMBER)
+	{
+		return;
+	}
+
+	const float NewLateralSpeed = FMath::Max(0.0f, LateralSpeed - (AirLateralDragDeceleration * DeltaTime));
+	const FVector NewLateralVelocity = (NewLateralSpeed > 0.0f) ? (LateralVelocity * (NewLateralSpeed / LateralSpeed)) : FVector::ZeroVector;
+	const FVector VerticalVelocity = Velocity - LateralVelocity;
+	Velocity = VerticalVelocity + NewLateralVelocity;
+}
+
 void URDBasecharacterMovementComponent::PhysCustom(float DeltaTime, int32 Iterations)
 {
 	if (CustomMovementMode == static_cast<uint8>(ERDBasecharacterCustomMovementMode::CMOVE_WallRun))
